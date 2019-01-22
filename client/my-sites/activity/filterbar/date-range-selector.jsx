@@ -20,6 +20,7 @@ import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import MobileSelectPortal from './mobile-select-portal';
 import { isWithinBreakpoint } from 'lib/viewport';
+import DateRangePicker from 'components/date-range';
 
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
@@ -64,6 +65,31 @@ export class DateRangeSelector extends Component {
 
 		onClose();
 	};
+
+		getFormattedDatesForAction = ( { startDate, endDate } ) => {
+		const formattedStartDate = startDate
+			? moment( startDate ).format( DATE_FORMAT )
+			: null;
+		const formattedEndDate = endDate
+			? moment( endDate ).endOf( 'day' ).format( DATE_FORMAT )
+			: null;
+
+		return {
+			startDate: formattedStartDate,
+			endDate: formattedEndDate,
+		};
+
+	}
+
+	handleDateRangeCommit = ( startDate, endDate ) => {
+		const { siteId } = this.props;
+		const {
+			startDate: formattedStartDate,
+			endDate: formattedEndDate,
+		} = this.getFormattedDatesForAction( { startDate, endDate } );
+
+		this.props.selectDateRange( siteId, formattedStartDate, formattedEndDate ); // enough?
+	}
 
 	isSelectingFirstDay = ( from, to, day ) => {
 		const isBeforeFirstDay = from && DateUtils.isDayBefore( day, from );
@@ -296,6 +322,34 @@ export class DateRangeSelector extends Component {
 		} );
 		return (
 			<Fragment>
+				<DateRangePicker
+					renderTrigger={
+						props => (
+							<Fragment>
+							<Button
+								className={ buttonClass }
+								compact
+								borderless
+								onClick={ props.onTriggerClick }
+								ref={ props.buttonRef }
+							>
+								{ this.getFormattedDate( from, to ) }
+							</Button>
+							{ ( from || to ) && (
+								<Button
+									className="filterbar__selection-close"
+									compact
+									borderless
+									onClick={ this.handleResetSelection }
+								>
+									<Gridicon icon="cross-small" />
+								</Button>
+							) }
+							</Fragment>
+						)
+					}
+					onDateCommit={ this.handleDateRangeCommit }
+				/>
 				<Button
 					className={ buttonClass }
 					compact
