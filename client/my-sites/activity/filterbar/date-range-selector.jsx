@@ -66,20 +66,19 @@ export class DateRangeSelector extends Component {
 		onClose();
 	};
 
-		getFormattedDatesForAction = ( { startDate, endDate } ) => {
-		const formattedStartDate = startDate
-			? moment( startDate ).format( DATE_FORMAT )
-			: null;
+	getFormattedDatesForAction = ( { startDate, endDate } ) => {
+		const formattedStartDate = startDate ? moment( startDate ).format( DATE_FORMAT ) : null;
 		const formattedEndDate = endDate
-			? moment( endDate ).endOf( 'day' ).format( DATE_FORMAT )
+			? moment( endDate )
+					.endOf( 'day' )
+					.format( DATE_FORMAT )
 			: null;
 
 		return {
 			startDate: formattedStartDate,
 			endDate: formattedEndDate,
 		};
-
-	}
+	};
 
 	handleDateRangeCommit = ( startDate, endDate ) => {
 		const { siteId } = this.props;
@@ -89,7 +88,7 @@ export class DateRangeSelector extends Component {
 		} = this.getFormattedDatesForAction( { startDate, endDate } );
 
 		this.props.selectDateRange( siteId, formattedStartDate, formattedEndDate ); // enough?
-	}
+	};
 
 	isSelectingFirstDay = ( from, to, day ) => {
 		const isBeforeFirstDay = from && DateUtils.isDayBefore( day, from );
@@ -320,12 +319,14 @@ export class DateRangeSelector extends Component {
 			'is-selected': !! from,
 			'is-active': isVisible && ! from,
 		} );
+
 		return (
 			<Fragment>
 				<DateRangePicker
-					renderTrigger={
-						props => (
-							<Fragment>
+					selectedStartDate={ from }
+					selectedEndDate={ to }
+					renderTrigger={ props => (
+						<Fragment>
 							<Button
 								className={ buttonClass }
 								compact
@@ -345,9 +346,8 @@ export class DateRangeSelector extends Component {
 									<Gridicon icon="cross-small" />
 								</Button>
 							) }
-							</Fragment>
-						)
-					}
+						</Fragment>
+					) }
 					onDateCommit={ this.handleDateRangeCommit }
 				/>
 				<Button

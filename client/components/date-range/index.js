@@ -97,8 +97,8 @@ export class DateRange extends Component {
 		// Build initial state
 		this.state = {
 			popoverVisible: false,
-			staleStartDate: '',
-			staleEndDate: '',
+			staleStartDate: this.props.selectedStartDate,
+			staleEndDate: this.props.selectedEndDate,
 			startDate: startDate,
 			endDate: endDate,
 			staleDatesSaved: false,
